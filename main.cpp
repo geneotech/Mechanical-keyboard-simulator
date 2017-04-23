@@ -19,13 +19,13 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	size_t current_line = 0;
 
 	bool enable_hrtf = false;
-	vec2 listener_position;
-	float volume = 1.f;
+	vec2 listener_position = { -1.f, -1.f };
+	float volume = -1.f;
 
 	auto get_property = [&](auto& into, const auto supposed_property_name){
 		std::string actual_property_name;
 		std::istringstream is(cfg[current_line]);
-		is >> actual_property_name;
+		is >> actual_property_name >> into;
 
 		ensure_eq(supposed_property_name, actual_property_name);
 		++current_line;
