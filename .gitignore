@@ -195,8 +195,8 @@ cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
 *.exp
-Hypersomnia.lib
-Hypersomnia-Debug.lib
+Mechanical-keyboard-simulator-Release.lib
+Mechanical-keyboard-simulator-Debug.lib
 alsoft.ini
 *.db-shm
 *.db-wal
