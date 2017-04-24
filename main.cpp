@@ -35,7 +35,7 @@ struct vec3 {
 		return { x + b.x, y + b.y, z + b.z };
 	}
 
-	vec3& operator*=(float s) {
+	vec3& operator*=(const float s) {
 		*this = vec3{ x * s, y * s, z * s };
 		return *this;
 	}
@@ -71,20 +71,20 @@ struct key_metric {
 	vec3 size;
 };
 
-augs::enum_array<key_metric, key> metrics;
+augs::enum_array<key_metric, key> key_metrics;
 
 void vertical_scanline(vec3 current_pos) {}
 
 template <class... A>
-void vertical_scanline(vec3 current_pos, vec3 arg, A... args) {
-	current_pos.y += arg.y;
+void vertical_scanline(vec3 current_pos, const vec3 separator, A... args) {
+	current_pos.y += separator.y;
 	vertical_scanline(current_pos, args...);
 }
 
 template <class... A>
-void vertical_scanline(vec3 current_pos, key arg, A... args) {
-	metrics[arg].lt_pos = current_pos;
-	current_pos.y += metrics[arg].size.y;
+void vertical_scanline(vec3 current_pos, const key key_id, A... args) {
+	key_metrics[key_id].lt_pos = current_pos;
+	current_pos.y += key_metrics[key_id].size.y;
 
 	vertical_scanline(current_pos, args...);
 }
@@ -92,41 +92,41 @@ void vertical_scanline(vec3 current_pos, key arg, A... args) {
 void horizontal_scanline(vec3 current_pos) {}
 
 template <class... A>
-void horizontal_scanline(vec3 current_pos, vec3 arg, A... args) {
-	current_pos.x += arg.x;
+void horizontal_scanline(vec3 current_pos, const vec3 separator, A... args) {
+	current_pos.x += separator.x;
 	horizontal_scanline(current_pos, args...);
 }
 
 template <class... A>
-void horizontal_scanline(vec3 current_pos, key arg, A... args) {
-	metrics[arg].lt_pos = current_pos;
-	current_pos.x += metrics[arg].size.x;
+void horizontal_scanline(vec3 current_pos, const key key_id, A... args) {
+	key_metrics[key_id].lt_pos = current_pos;
+	current_pos.x += key_metrics[key_id].size.x;
 
 	horizontal_scanline(current_pos, args...);
 }
 
 void set_default_keyboard_metrics() {
-	auto pos = [](auto id) -> vec3& { return metrics[id].center_pos; };
-	auto lt_pos = [](auto id) -> vec3& { return metrics[id].lt_pos; };
-	auto sz = [](auto id) -> vec3& { return metrics[id].size; };
+	auto pos = [](auto id) -> vec3& { return key_metrics[id].center_pos; };
+	auto lt_pos = [](auto id) -> vec3& { return key_metrics[id].lt_pos; };
+	auto sz = [](auto id) -> vec3& { return key_metrics[id].size; };
 
-	vec3 standard_sz = { 45, 45 };
-	vec3 ctrl_alt_win_fn_lshift_sz = { 55, 45 };
-	vec3 space_sz = { 55, 45 };
-	vec3 caps_sz = { 80, 45 };
-	vec3 tab_sz = { 65, 45 };
-	vec3 backspace_sz = { 90, 45 };
-	vec3 add_sz = { 45, 90 };
-	vec3 enter_sz = { 95, 45 };
-	vec3 rshift_sz = { 120, 45 };
-	vec3 lshift_sz = { 120, 45 };
-	vec3 backslash_sz = { 65, 45 };
+	const vec3 standard_sz = { 45, 45 };
+	const vec3 ctrl_alt_win_fn_lshift_sz = { 55, 45 };
+	const vec3 space_sz = { 55, 45 };
+	const vec3 caps_sz = { 80, 45 };
+	const vec3 tab_sz = { 65, 45 };
+	const vec3 backspace_sz = { 90, 45 };
+	const vec3 add_sz = { 45, 90 };
+	const vec3 enter_sz = { 95, 45 };
+	const vec3 rshift_sz = { 120, 45 };
+	const vec3 lshift_sz = { 120, 45 };
+	const vec3 backslash_sz = { 65, 45 };
 	
-	vec3 standard_sep = { 20, 45 } ;
-	vec3 f4_f5_sep = { 20, 45 } ;
-	vec3 esc_tilde_sep = { 45, 20 };
+	const vec3 standard_sep = { 20, 45 } ;
+	const vec3 f4_f5_sep = { 20, 45 } ;
+	const vec3 esc_tilde_sep = { 45, 20 };
 
-	for (auto& k : metrics) {
+	for (auto& k : key_metrics) {
 		k.size = standard_sz;
 	}
 
@@ -302,8 +302,8 @@ void set_default_keyboard_metrics() {
 		key::RIGHT
 	);
 
-	for (size_t i = 0; i < metrics.size(); ++i) {
-		metrics[i].center_pos = metrics[i].lt_pos + vec3(metrics[i].size) *= 0.5;
+	for (std::size_t i = 0; i < key_metrics.size(); ++i) {
+		key_metrics[i].center_pos = key_metrics[i].lt_pos + vec3(key_metrics[i].size) *= 0.5f;
 	}
 }
 
@@ -409,9 +409,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	augs::enum_array<key_state, key> keys;
 
-	for (size_t i = 0; i < keys.size(); ++i) {
+	for (std::size_t i = 0; i < keys.size(); ++i) {
 		keys[i].pairs = default_sound_pairs;
-		keys[i].position = metrics[i].center_pos;
+		keys[i].position = key_metrics[i].center_pos;
 	}
 
 	ensure_eq("keys:", cfg[current_line++]);
@@ -441,7 +441,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 		next_key.pairs.clear();
 
 		if (position_str == "default") {
-			next_key.position = metrics[key_id].center_pos;
+			next_key.position = key_metrics[key_id].center_pos;
 		}
 		else {
 			typesafe_sscanf(position_str, "%x", next_key.position);
@@ -457,7 +457,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	{
 		std::wstring positions;
 
-		for (size_t i = 0; i < keys.size(); ++i) {
+		for (std::size_t i = 0; i < keys.size(); ++i) {
 			if (keys[i].pairs.size() > 0) {
 				positions += typesafe_sprintf(L"Key: %x Pos: %x\n", key_to_wstring(key(i)), keys[i].position);
 			}
