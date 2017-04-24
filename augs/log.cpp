@@ -11,7 +11,7 @@
 #include "augs/templates/string_templates.h"
 
 #define ENABLE_LOG 1
-#define LOG_TO_FILE 0
+#define LOG_TO_FILE 1
 
 std::mutex log_mutex;
 

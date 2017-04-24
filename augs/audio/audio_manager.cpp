@@ -36,7 +36,7 @@ namespace augs {
 	) {
 		std::string alsoft_ini_file;
 		alsoft_ini_file += "# Do not modify.";
-		alsoft_ini_file += "\n# Hypersomnia generates this file every launch to speak with OpenAL.";
+		alsoft_ini_file += "\n# This program generates this file every launch to speak with OpenAL.";
 		alsoft_ini_file += "\n# Modification will have no effect.";
 		alsoft_ini_file += "\nhrtf = ";
 		alsoft_ini_file += hrtf_enabled ? "true" : "false";
