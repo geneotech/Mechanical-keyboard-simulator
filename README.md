@@ -5,6 +5,7 @@ Thus, the reason I've chosen AGPL-3.0 for this project is because [Hypersomnia](
 
 Advantages over the commonly found simulators:
 - Both keydown and keyup events, and optionally mouse clicks, are handled.
+- Unlimited sound sources. Other simulators abruptly mute the previous sound if it does not finish playing before the next keystroke.
 - Full spatialization of the sounds based on the actual positions of the keys on the keyboard.
 - Configurability, including the positions of the sounds.
 - Ability to use HRTF.
