@@ -5,22 +5,22 @@
 
 #include <Windows.h>
 
+#include <AL/al.h>
+#include <AL/alc.h>
+
 #include "augs/audio/audio_manager.h"
 #include "augs/audio/sound_buffer.h"
 #include "augs/audio/sound_source.h"
 
 #include "augs/misc/typesafe_sscanf.h"
+
 #include "augs/filesystem/directory.h"
 #include "augs/filesystem/file.h"
 #include "augs/misc/enum_array.h"
-#include "augs/math/vec2.h"
 #include "augs/math/si_scaling.h"
 
 #include "augs/window_framework/translate_windows_enums.h"
 #include "augs/templates/container_templates.h"
-
-#include <AL/al.h>
-#include <AL/alc.h>
 
 #define LOG_PRESSES 0
 
@@ -53,7 +53,7 @@ std::wostream& operator<<(std::wostream& out, const vec3& x) {
 	return out;
 }
 
-struct key_settings {
+struct key_state {
 	struct sound_pair {
 		std::string down_sound_path;
 		std::string up_sound_path;
@@ -62,7 +62,7 @@ struct key_settings {
 	vec3 position;
 	std::vector<sound_pair> pairs;
 	std::size_t next_pair_to_be_played = 0u;
-	bool pressed = false;
+	bool is_pressed = false;
 };
 
 struct key_metric {
@@ -73,9 +73,7 @@ struct key_metric {
 
 augs::enum_array<key_metric, key> metrics;
 
-void vertical_scanline(vec3 current_pos) {
-
-}
+void vertical_scanline(vec3 current_pos) {}
 
 template <class... A>
 void vertical_scanline(vec3 current_pos, vec3 arg, A... args) {
@@ -91,10 +89,7 @@ void vertical_scanline(vec3 current_pos, key arg, A... args) {
 	vertical_scanline(current_pos, args...);
 }
 
-
-void horizontal_scanline(vec3 current_pos) {
-
-}
+void horizontal_scanline(vec3 current_pos) {}
 
 template <class... A>
 void horizontal_scanline(vec3 current_pos, vec3 arg, A... args) {
@@ -297,6 +292,7 @@ void set_default_keyboard_metrics() {
 		lt_pos(key::LCTRL),
 		key::LWIN,
 		key::LALT,
+		key::SPACE,
 		key::RWIN,
 		standard_sep,
 		key::RCTRL,
@@ -310,7 +306,6 @@ void set_default_keyboard_metrics() {
 		metrics[i].center_pos = metrics[i].lt_pos + vec3(metrics[i].size) *= 0.5;
 	}
 }
-
 
 int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	augs::create_directories("generated/logs/");
@@ -385,7 +380,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	};
 
-	const auto make_sound_pairs = [make_buffer, &rng](const std::string sound_pairs_line, std::vector<key_settings::sound_pair>& into) {
+	const auto make_sound_pairs = [make_buffer, &rng](const std::string sound_pairs_line, std::vector<key_state::sound_pair>& into) {
 		std::istringstream is(sound_pairs_line);
 
 		std::string down_sound_path;
@@ -409,10 +404,10 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 		std::shuffle(into.begin(), into.end(), rng);
 	};
 
-	std::vector<key_settings::sound_pair> default_sound_pairs;
+	std::vector<key_state::sound_pair> default_sound_pairs;
 	make_sound_pairs(default_pairs, default_sound_pairs);
 
-	augs::enum_array<key_settings, key> keys;
+	augs::enum_array<key_state, key> keys;
 
 	for (size_t i = 0; i < keys.size(); ++i) {
 		keys[i].pairs = default_sound_pairs;
@@ -496,21 +491,21 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			const bool is_fake_lctrl =
 				id == key::LCTRL
-				&& keys[key::RALT].pressed
+				&& keys[key::RALT].is_pressed
 			;
 
 			if (is_fake_lctrl) {
 				continue;
 			}
 
-			const auto res = GetAsyncKeyState(i);
+			const auto async_key_state_result = GetAsyncKeyState(i);
 			
 			auto& subject_key = keys[id];
 
-			if (res == -32767) {
+			if (async_key_state_result == -32767) {
 				LOG_NVPS(i);
-				if(!subject_key.pressed) {
-					subject_key.pressed = true;
+				if(!subject_key.is_pressed) {
+					subject_key.is_pressed = true;
 					
 					if (subject_key.pairs.empty()) {
 						continue;
@@ -540,9 +535,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 					break;
 				}
 			}
-			else if (res == 0) {
-				if(subject_key.pressed) {
-					subject_key.pressed = false;
+			else if (async_key_state_result == 0) {
+				if(subject_key.is_pressed) {
+					subject_key.is_pressed = false;
 
 					if (subject_key.pairs.empty()) {
 						continue;
