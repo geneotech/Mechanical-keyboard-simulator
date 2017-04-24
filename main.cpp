@@ -112,7 +112,7 @@ void set_default_keyboard_metrics() {
 
 	const vec3 standard_sz = { 45, 45 };
 	const vec3 ctrl_alt_win_fn_lshift_sz = { 55, 45 };
-	const vec3 space_sz = { 55, 45 };
+	const vec3 space_sz = { 255, 45 };
 	const vec3 caps_sz = { 80, 45 };
 	const vec3 tab_sz = { 65, 45 };
 	const vec3 backspace_sz = { 90, 45 };
@@ -447,11 +447,13 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 			typesafe_sscanf(position_str, "%x", next_key.position);
 		}
 
-		next_key.position *= scale_key_positions;
-		
 		make_sound_pairs(sound_pairs_line, next_key.pairs);
 
 		++current_line;
+	}
+
+	for (std::size_t i = 0; i < keys.size(); ++i) {
+		keys[i].position *= scale_key_positions;
 	}
 
 	{
