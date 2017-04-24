@@ -20,6 +20,8 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
+#define LOG_PRESSES 0
+
 struct vec3 {
 	float x = 0.f;
 	float y = 0.f;
@@ -63,13 +65,15 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::array<float, 6> listener_orientation = { -1.f, -1.f, -1.f, -1.f, -1.f, -1.f };
 	std::string output_device;
 	/* END OF CONFIG SETTINGS */
-
-	typesafe_sscanf(cfg[0], "volume %x", volume);
-	typesafe_sscanf(cfg[1], "enable_hrtf %x", enable_hrtf);
-	typesafe_sscanf(cfg[2], "mix_all_sounds_to_mono %x", mix_all_sounds_to_mono);
-	typesafe_sscanf(cfg[3], "listener_position %x", listener_position);
 	
-	typesafe_sscanf(cfg[4], "listener_orientation (%x;%x;%x;%x;%x;%x)", 
+	std::size_t current_line = 0;
+
+	typesafe_sscanf(cfg[current_line++], "volume %x", volume);
+	typesafe_sscanf(cfg[current_line++], "enable_hrtf %x", enable_hrtf);
+	typesafe_sscanf(cfg[current_line++], "mix_all_sounds_to_mono %x", mix_all_sounds_to_mono);
+	typesafe_sscanf(cfg[current_line++], "listener_position %x", listener_position);
+	
+	typesafe_sscanf(cfg[current_line++], "listener_orientation (%x;%x;%x;%x;%x;%x)", 
 		listener_orientation[0], 
 		listener_orientation[1], 
 		listener_orientation[2], 
@@ -78,11 +82,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 		listener_orientation[5]
 	);
 
-	typesafe_sscanf(cfg[5], "output_device \"%x\"", output_device);
+	typesafe_sscanf(cfg[current_line++], "output_device \"%x\"", output_device);
 
-	ensure_eq("keys:", cfg[6]);
-	
-	std::size_t current_line = 7;
+	ensure_eq("keys:", cfg[current_line++]);
 
 	augs::audio_manager::generate_alsoft_ini(
 		enable_hrtf,
@@ -164,7 +166,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	while (true) {
 		Sleep(1);
 
-		for(int i = 0xFF - 1; i >= 0; --i) {
+		for (int i = 0xFF - 1; i >= 0; --i) {
 			const auto id = translate_virtual_key(i);
 			
 			if (
@@ -197,11 +199,11 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 					}
 
 					const auto& pair = subject_key.pairs[subject_key.next_pair_to_be_played];
-
+#if LOG_PRESSES
 					const auto name = key_to_wstring(id);
 					
 					LOG("DOWN " + std::string(name.begin(), name.end()));
-
+#endif
 					augs::sound_source src;
 					src.bind_buffer(sound_buffers[pair.down_sound_path]);
 					src.set_gain(volume);
@@ -230,9 +232,11 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 
 					const auto& pair = subject_key.pairs[subject_key.next_pair_to_be_played];
 
-					//const auto name = key_to_wstring(id);
-					//
-					//LOG("UP " + std::string(name.begin(), name.end()));
+#if LOG_PRESSES
+					const auto name = key_to_wstring(id);
+					
+					LOG("UP " + std::string(name.begin(), name.end()));
+#endif
 			
 					augs::sound_source src;
 					src.bind_buffer(sound_buffers[pair.up_sound_path]);
