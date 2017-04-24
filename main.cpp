@@ -503,7 +503,6 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 			auto& subject_key = keys[id];
 
 			if (async_key_state_result == -32767) {
-				LOG_NVPS(i);
 				if(!subject_key.is_pressed) {
 					subject_key.is_pressed = true;
 					
