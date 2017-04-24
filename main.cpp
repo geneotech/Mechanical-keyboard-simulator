@@ -108,7 +108,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		const auto samples = augs::get_sound_samples_from_file(path);
 
-		if (mix_all_sounds_to_mono) {
+		if (samples.channels > 1 && mix_all_sounds_to_mono) {
 			buf.set_data(mix_stereo_to_mono(samples));
 		}
 		else {
@@ -198,9 +198,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 
 					const auto& pair = subject_key.pairs[subject_key.next_pair_to_be_played];
 
-					//const auto name = key_to_wstring(id);
-					//
-					//LOG("DOWN " + std::string(name.begin(), name.end()));
+					const auto name = key_to_wstring(id);
+					
+					LOG("DOWN " + std::string(name.begin(), name.end()));
 
 					augs::sound_source src;
 					src.bind_buffer(sound_buffers[pair.down_sound_path]);
