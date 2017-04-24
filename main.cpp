@@ -122,8 +122,9 @@ void set_default_keyboard_metrics() {
 	const vec3 lshift_sz = { 120, 45 };
 	const vec3 backslash_sz = { 65, 45 };
 	
-	const vec3 standard_sep = { 20, 45 } ;
-	const vec3 f4_f5_sep = { 20, 45 } ;
+	const vec3 standard_separator = { 45, 45 };
+	// for example between f4 and f5, or between right control and left arrow
+	const vec3 smaller_separator = { 20, 45 };
 	const vec3 esc_tilde_sep = { 45, 20 };
 
 	for (auto& k : key_metrics) {
@@ -162,22 +163,22 @@ void set_default_keyboard_metrics() {
 	horizontal_scanline(
 		lt_pos(key::ESC),
 		key::ESC,
-		standard_sep,
+		standard_separator,
 		key::F1,
 		key::F2,
 		key::F3,
 		key::F4,
-		f4_f5_sep,
+		smaller_separator,
 		key::F5,
 		key::F6,
 		key::F7,
 		key::F8,
-		standard_sep,
+		standard_separator,
 		key::F9,
 		key::F10,
 		key::F11,
 		key::F12,
-		f4_f5_sep,
+		smaller_separator,
 		key::PRINTSCREEN,
 		key::SCROLL,
 		key::PAUSE
@@ -199,13 +200,13 @@ void set_default_keyboard_metrics() {
 		key::MINUS,
 		key::PLUS,
 		key::BACKSPACE,
-		standard_sep,
+		standard_separator,
 		key::INSERT,
 		key::HOME,
 		key::PAGEUP,
-		standard_sep,
+		standard_separator,
 		key::NUMLOCK,
-		standard_sep,
+		standard_separator,
 		key::MULTIPLY,
 		key::SUBTRACT
 	);
@@ -226,11 +227,11 @@ void set_default_keyboard_metrics() {
 		key::OPEN_SQUARE_BRACKET,
 		key::CLOSE_SQUARE_BRACKET,
 		key::BACKSLASH,
-		f4_f5_sep,
+		smaller_separator,
 		key::DEL,
 		key::END,
 		key::PAGEDOWN,
-		f4_f5_sep,
+		smaller_separator,
 		key::NUMPAD7,
 		key::NUMPAD8,
 		key::NUMPAD9,
@@ -254,11 +255,11 @@ void set_default_keyboard_metrics() {
 		key::ENTER,
 		key::CLOSE_SQUARE_BRACKET,
 		key::ENTER,
-		f4_f5_sep,
-		standard_sep,
-		standard_sep,
-		standard_sep,
-		f4_f5_sep,
+		smaller_separator,
+		standard_separator,
+		standard_separator,
+		standard_separator,
+		smaller_separator,
 		key::NUMPAD4,
 		key::NUMPAD5,
 		key::NUMPAD6
@@ -278,11 +279,11 @@ void set_default_keyboard_metrics() {
 		key::PERIOD,
 		key::SLASH,
 		key::RSHIFT,
-		f4_f5_sep,
-		standard_sep,
+		smaller_separator,
+		standard_separator,
 		key::UP,
-		standard_sep,
-		f4_f5_sep,
+		standard_separator,
+		smaller_separator,
 		key::NUMPAD1,
 		key::NUMPAD2,
 		key::NUMPAD3
@@ -294,9 +295,9 @@ void set_default_keyboard_metrics() {
 		key::LALT,
 		key::SPACE,
 		key::RWIN,
-		standard_sep,
+		standard_separator,
 		key::RCTRL,
-		f4_f5_sep,
+		smaller_separator,
 		key::LEFT,
 		key::DOWN,
 		key::RIGHT
