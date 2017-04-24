@@ -1,7 +1,9 @@
 # Mechanical-keyboard-simulator
-A configurable Windows daemon that plays a spatialized sound every time you press and release a keyboard button.
-The code uses [Hypersomnia](https://github.com/TeamHypersomnia/Hypersomnia) codebase (```augs/``` and ```3rdparty/```) to play sounds and perform various file operations.
-Thus, the reason I've chosen AGPL-3.0 for this project is because [Hypersomnia](https://github.com/TeamHypersomnia/Hypersomnia) itself uses AGPL-3.0.
+If you're anything like me, you are fond of the sound of your own keyboard, especially while doing some serious coding. The thing is, it is also in my habit to put on headphones and play loud tunes whenever I program, even more so if I'm doing some tedious refactoring. Then, quite obviously, I cannot at all hear my own keystrokes anymore. Why not have the best of both worlds?
+
+Thus, I wrote a configurable Windows daemon that plays a spatialized sound every time you press and release a keyboard button.
+The code uses [**Hypersomnia**](https://github.com/TeamHypersomnia/Hypersomnia) codebase (```augs/``` and ```3rdparty/```) to play sounds and perform various file operations.
+Thus, the reason I've chosen AGPL-3.0 for this project is because [**Hypersomnia**](https://github.com/TeamHypersomnia/Hypersomnia) itself uses AGPL-3.0.
 
 Advantages over the commonly found simulators:
 - Both keydown and keyup events, and optionally mouse clicks, are handled.
