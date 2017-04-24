@@ -45,3 +45,9 @@ If a line begins with %, it is a comment.
 To see available key names, go to 
 https://github.com/geneotech/Mechanical-keyboard-simulator/blob/master/augs/window_framework/event.cpp#L109
 
+# Sounds
+The keystroke sounds are recordings of my own keyboard, although they are not really of good quality.
+
+The mouse click sounds were taken from http://www.freesound.org/people/junkfood2121/sounds/208204/.
+
+Feel free to create a pull request with better sounds that you find, especially keystrokes.
