@@ -65,8 +65,6 @@ struct key_settings {
 	bool pressed = false;
 };
 
-augs::enum_array<key_settings, key> keys;
-
 struct key_metric {
 	vec3 lt_pos;
 	vec3 center_pos;
@@ -113,9 +111,9 @@ void horizontal_scanline(vec3 current_pos, key arg, A... args) {
 }
 
 void set_default_keyboard_metrics() {
-	auto pos = [](auto id) { return metrics[id].center_pos; };
-	auto lt_pos = [](auto id) { return metrics[id].lt_pos; };
-	auto sz = [](auto id) { return metrics[id].size; };
+	auto pos = [](auto id) -> vec3& { return metrics[id].center_pos; };
+	auto lt_pos = [](auto id) -> vec3& { return metrics[id].lt_pos; };
+	auto sz = [](auto id) -> vec3& { return metrics[id].size; };
 
 	vec3 standard_sz = { 45, 45 };
 	vec3 ctrl_alt_win_fn_lshift_sz = { 55, 45 };
@@ -309,7 +307,7 @@ void set_default_keyboard_metrics() {
 	);
 
 	for (size_t i = 0; i < metrics.size(); ++i) {
-		metrics[i].center_pos = metrics[i].lt_pos + vec3(metrics[i].size);
+		metrics[i].center_pos = metrics[i].lt_pos + vec3(metrics[i].size) *= 0.5;
 	}
 }
 
@@ -333,6 +331,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	float scale_key_positions = 1.f;
 	std::string output_device;
 	unsigned long long sleep_every_iteration_for_microseconds = 0u;
+	std::string default_pairs;
 	/* END OF CONFIG SETTINGS */
 	
 	std::size_t current_line = 0;
@@ -354,8 +353,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	typesafe_sscanf(cfg[current_line++], "scale_key_positions %x", scale_key_positions);
 	typesafe_sscanf(cfg[current_line++], "output_device \"%x\"", output_device);
 	typesafe_sscanf(cfg[current_line++], "sleep_every_iteration_for_microseconds %x", sleep_every_iteration_for_microseconds);
-
-	ensure_eq("keys:", cfg[current_line++]);
+	typesafe_sscanf(cfg[current_line++], "default_pairs %x", default_pairs);
 
 	augs::audio_manager::generate_alsoft_ini(
 		enable_hrtf,
@@ -369,7 +367,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	alListener3f(AL_POSITION, listener_position.x, listener_position.y, listener_position.z);
 
 	std::unordered_map<std::string, augs::single_sound_buffer> sound_buffers;
-	
+
 	const auto make_buffer = [&sound_buffers, mix_all_sounds_to_mono](const std::string path){
 		if (sound_buffers.find(path) != sound_buffers.end()) {
 			return;
@@ -387,41 +385,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	};
 
-	while (current_line < cfg.size()) {
-		const auto& line = cfg[current_line];
+	const auto make_sound_pairs = [make_buffer, &rng](const std::string sound_pairs_line, std::vector<key_settings::sound_pair>& into) {
+		std::istringstream is(sound_pairs_line);
 
-		if (line.size() > 0 && line[0] == '%') {
-			++current_line;
-			continue;
-		}
-
-		std::string key_name;
-		std::string sound_pairs;
-		std::string position_str;
-
-		typesafe_sscanf(
-			line, 
-			"name=\"%x\" position=%x pairs: %x", 
-			key_name, 
-			position_str, 
-			sound_pairs
-		);
-		
-		key_settings next_key;
-		
-		const auto key_id = wstring_to_key(std::wstring(key_name.begin(), key_name.end()));
-
-		if (position_str == "default") {
-			next_key.position = metrics[key_id].center_pos;
-		}
-		else {
-			typesafe_sscanf(position_str, "%x", next_key.position);
-		}
-
-		next_key.position *= scale_key_positions;
-
-		std::istringstream is(sound_pairs);
-		
 		std::string down_sound_path;
 		std::string up_sound_path;
 		std::string separator;
@@ -434,15 +400,61 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 			make_buffer(down_sound_path);
 			make_buffer(up_sound_path);
 
-			next_key.pairs.push_back({
+			into.push_back({
 				down_sound_path, 
 				up_sound_path
 			});
 		} 
 
-		std::shuffle(next_key.pairs.begin(), next_key.pairs.end(), rng);
+		std::shuffle(into.begin(), into.end(), rng);
+	};
 
-		keys[key_id] = next_key;
+	std::vector<key_settings::sound_pair> default_sound_pairs;
+	make_sound_pairs(default_pairs, default_sound_pairs);
+
+	augs::enum_array<key_settings, key> keys;
+
+	for (size_t i = 0; i < keys.size(); ++i) {
+		keys[i].pairs = default_sound_pairs;
+		keys[i].position = metrics[i].center_pos;
+	}
+
+	ensure_eq("keys:", cfg[current_line++]);
+
+	while (current_line < cfg.size()) {
+		const auto& line = cfg[current_line];
+
+		if (line.size() > 0 && line[0] == '%') {
+			++current_line;
+			continue;
+		}
+
+		std::string key_name;
+		std::string sound_pairs_line;
+		std::string position_str;
+
+		typesafe_sscanf(
+			line, 
+			"name=\"%x\" position=%x pairs: %x", 
+			key_name, 
+			position_str, 
+			sound_pairs_line
+		);
+		
+		const auto key_id = wstring_to_key(std::wstring(key_name.begin(), key_name.end()));
+		auto& next_key = keys[key_id];
+		next_key.pairs.clear();
+
+		if (position_str == "default") {
+			next_key.position = metrics[key_id].center_pos;
+		}
+		else {
+			typesafe_sscanf(position_str, "%x", next_key.position);
+		}
+
+		next_key.position *= scale_key_positions;
+		
+		make_sound_pairs(sound_pairs_line, next_key.pairs);
 
 		++current_line;
 	}
