@@ -2,6 +2,14 @@
 A configurable Windows daemon that plays a spatialized sound every time you press and release a keyboard button.
 The code uses [Hypersomnia](https://github.com/TeamHypersomnia/Hypersomnia) codebase (```augs/``` and ```3rdparty/```) to play sounds and perform various file operations.
 
+Advantages over the commonly found simulators:
+- Both keydown and keyup events, and optionally mouse clicks, are handled.
+- Full spatialization of the sounds based on the actual positions of the keys on the keyboard.
+- Configurability, including the positions of the sounds.
+- Ability to use HRTF.
+- Ability to choose the output device.
+- Ability to add custom sounds.
+
 # How to build
 Just download the repository, open .sln file in Visual Studio 2017 and hit build.
 
