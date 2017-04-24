@@ -1,15 +1,14 @@
 # Mechanical-keyboard-simulator
 If you're anything like me, you are fond of the sound of your own keyboard, especially while doing some serious coding. The thing is, it is also in my habit to put on headphones and play loud tunes whenever I program, even more so if I'm doing some tedious refactoring. Then, quite obviously, I cannot at all hear my own keystrokes anymore. Why not have the best of both worlds?
 
-Thus, I wrote a configurable Windows daemon that plays a spatialized sound every time you press and release a keyboard button.
+That is why I wrote a configurable Windows daemon that plays a spatialized sound every time you press and release a keyboard button.
 The code uses [**Hypersomnia**](https://github.com/TeamHypersomnia/Hypersomnia) codebase (```augs/``` and ```3rdparty/```) to play sounds and perform various file operations.
 Thus, the reason I've chosen AGPL-3.0 for this project is because [**Hypersomnia**](https://github.com/TeamHypersomnia/Hypersomnia) itself uses AGPL-3.0.
 
 Advantages over the commonly found simulators:
 - Both keydown and keyup events, and optionally mouse clicks, are handled.
-- Unlimited sound sources. Other simulators abruptly mute the previous sound if it does not finish playing before the next keystroke.
-- Full spatialization of the sounds based on the actual positions of the keys on the keyboard.
-- Configurability, including the positions of the sounds.
+- Unlimited amount of sound sources. Other simulators abruptly mute the currently playing sound if it does not finish playing before the next keystroke.
+- Full spatialization of the sounds based on the actual positions of keys on the keyboard, or custom values.
 - Ability to use HRTF.
 - Ability to choose the output device.
 - Ability to add custom sounds.
@@ -25,7 +24,7 @@ Explanation of values:
 - ```enable_hrtf``` - whether or not to enable Head-Related Transfer Function (in other words, an even improved spatialization)
 - ```mix_all_sounds_to_mono``` - whether or not all requested sounds should be mixed to mono, and therefore spatialized. Note that if a requested sound is stereo, it will not be spatialized unless this flag is set to 1.
 - ```listener_position``` - the position in 3D space of the listener of the sounds.
-- ```listener_orientation``` - a tuple of two three-dimensional vectors that define the listener's orientation. First three values are the "at" vector, the latter three values are the "up" vector.
+- ```listener_orientation``` - two three-dimensional vectors that define the listener's orientation. First three values are the "at" vector, the latter three values are the "up" vector.
 - ```scale_key_positions``` - a value by which to scale all positions in 3D space of the keys. By default, the app positions escape at ```(0;0;0)``` coordinates and makes standard-sized buttons like Q,W,E,R,T,Y... 45 units wide and high.
 - ```output_device``` - output audio device. Leave "" to select the default output device.
 - ```sleep_every_iteration_for_microseconds``` - how much to sleep per every main loop iteration. Higher values will eat less CPU, but some keystrokes might be missed.
@@ -45,3 +44,9 @@ If a line begins with %, it is a comment.
 To see available key names, go to 
 https://github.com/geneotech/Mechanical-keyboard-simulator/blob/master/augs/window_framework/event.cpp#L109
 
+# Sounds
+The keystroke sounds are recordings of my own keyboard, although they are not really of good quality.
+
+The mouse click sounds were taken from http://www.freesound.org/people/junkfood2121/sounds/208204/.
+
+Feel free to create a pull request with better sounds that you find, especially keystrokes.
