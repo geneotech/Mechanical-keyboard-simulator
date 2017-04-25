@@ -368,7 +368,9 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 			process_name_blacklist.push_back(process_name);
 		}
 
-		makeeventsink(process_name_blacklist);
+		if(process_name_blacklist.size() > 0) {
+			makeeventsink(process_name_blacklist);
+		}
 	}
 
 	augs::audio_manager::generate_alsoft_ini(
@@ -502,7 +504,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 			std::this_thread::sleep_for(1us * sleep_every_iteration_for_microseconds);
 		}
 
-		if (pSink->is_any_on()) {
+		if (pSink != nullptr && pSink->is_any_on()) {
 			std::this_thread::sleep_for(5ms);
 			continue;
 		}
