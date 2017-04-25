@@ -51,6 +51,8 @@
     <ClCompile Include="augs\templates\templates.cpp" />
     <ClCompile Include="augs\window_framework\event.cpp" />
     <ClCompile Include="augs\window_framework\translate_windows_enums.cpp" />
+    <ClCompile Include="eventsink.cpp" />
+    <ClCompile Include="eventsinkcall.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +147,8 @@
     <ClInclude Include="augs\window_framework\event.h" />
     <ClInclude Include="augs\window_framework\translate_windows_enums.h" />
     <ClInclude Include="augs\zeroed_pod.h" />
+    <ClInclude Include="eventsink.h" />
+    <ClInclude Include="find_process_id.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

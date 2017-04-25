@@ -114,6 +114,12 @@
     <ClCompile Include="augs\misc\variable_delta_timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="eventsink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="eventsinkcall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="augs\templates\conditional_call.h">
@@ -387,6 +393,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="augs\misc\machine_entropy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="find_process_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eventsink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

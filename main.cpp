@@ -22,6 +22,9 @@
 #include "augs/window_framework/translate_windows_enums.h"
 #include "augs/templates/container_templates.h"
 
+#include "find_process_id.h"
+#include "eventsink.h"
+
 #define LOG_PRESSES 0
 
 using namespace augs::window::event::keys;
@@ -328,6 +331,7 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::string output_device;
 	unsigned long long sleep_every_iteration_for_microseconds = 0u;
 	std::string default_pairs;
+	std::string mute_when_these_processes_are_on;
 	/* END OF CONFIG SETTINGS */
 	
 	std::size_t current_line = 0;
@@ -350,6 +354,22 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	typesafe_sscanf(cfg[current_line++], "output_device \"%x\"", output_device);
 	typesafe_sscanf(cfg[current_line++], "sleep_every_iteration_for_microseconds %x", sleep_every_iteration_for_microseconds);
 	typesafe_sscanf(cfg[current_line++], "default_pairs %x", default_pairs);
+
+	typesafe_sscanf(cfg[current_line++], "mute_when_these_processes_are_on %x", mute_when_these_processes_are_on);
+
+	{
+		std::vector<std::string> process_name_blacklist;
+		std::istringstream is(mute_when_these_processes_are_on);
+		std::string separator;
+		std::string process_name;
+
+		while (std::getline(is, separator, '\"')) {
+			std::getline(is, process_name, '\"');
+			process_name_blacklist.push_back(process_name);
+		}
+
+		makeeventsink(process_name_blacklist);
+	}
 
 	augs::audio_manager::generate_alsoft_ini(
 		enable_hrtf,
@@ -476,9 +496,15 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::vector<augs::sound_source> sound_sources;
 
 	while (true) {
+		using namespace std::chrono_literals;
+		
 		if (sleep_every_iteration_for_microseconds > 0) {
-			using namespace std::chrono_literals;
 			std::this_thread::sleep_for(1us * sleep_every_iteration_for_microseconds);
+		}
+
+		if (pSink->is_any_on()) {
+			std::this_thread::sleep_for(5ms);
+			continue;
 		}
 
 		for (int i = 0xFF - 1; i >= 0; --i) {
