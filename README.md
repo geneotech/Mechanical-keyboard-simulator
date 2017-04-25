@@ -29,6 +29,7 @@ Explanation of values:
 - ```output_device``` - output audio device. Leave "" to select the default output device.
 - ```sleep_every_iteration_for_microseconds``` - how much to sleep per every main loop iteration. Higher values will eat less CPU, but some keystrokes might be missed.
 - ```default_pairs``` - the default sound pairs for the unspecified keys.
+- ```mute_when_these_processes_are_on``` - list of process names whose existence will mute the simulator. Useful when you want to play a game without the clicking sounds, for example. You can leave this field empty.
 
 The above lines **must remain in that order and no other line might be found inbetween them**.
 The next line must be equal to ```keys:```
