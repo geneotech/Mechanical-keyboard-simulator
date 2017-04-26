@@ -45,9 +45,19 @@ If a line begins with %, it is a comment.
 To see available key names, go to 
 https://github.com/geneotech/Mechanical-keyboard-simulator/blob/master/augs/window_framework/event.cpp#L109
 
+Notice that mouse clicking sounds don't get properly fetched in some areas, for example in Task Manager.
+If however it happens that the simulator misses some other obvious mouse clicks, try increasing the priority of the process.
+To disable mouse clicking sounds altogether, uncomment these three following lines:
+
+```
+%name="Left Mouse Button" position=(1.0;0;0) pairs: 
+%name="Right Mouse Button" position=(1.2;0;0) pairs: 
+%name="Middle Mouse Button" position=(1.1;0;0) pairs: 
+```
+
 # Sounds
-The keystroke sounds are recordings of my own keyboard, although they are not really of good quality.
+The keystroke sounds are recordings of my own keyboard.
 
 The mouse click sounds were taken from http://www.freesound.org/people/junkfood2121/sounds/208204/.
 
-Feel free to create a pull request with better sounds that you find, especially keystrokes.
+Feel free to create a pull request with better sounds that you find, perhaps with a separate config.cfg file for them.
