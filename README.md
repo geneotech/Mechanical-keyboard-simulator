@@ -1,3 +1,5 @@
+[**Mechanical-keyboard-simulator is now reviewed and available on Softpedia!**](http://www.softpedia.com/get/Others/Miscellaneous/Mechanical-Keyboard-Simulator.shtml) 
+
 # Mechanical-keyboard-simulator
 If you're anything like me, you are fond of the sound of your own keyboard, especially while doing some serious coding. The thing is, it is also in my habit to put on headphones and play loud tunes whenever I program, even more so if I'm doing some tedious refactoring. Then, quite obviously, I cannot at all hear my own keystrokes anymore. Why not have the best of both worlds?
 
